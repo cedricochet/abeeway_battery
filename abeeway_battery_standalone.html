@@ -220,7 +220,7 @@
                     &nbsp;<input type="radio" id="scancoll_idtype_mac" name="scancoll_idtype" value="MAC" checked>
                     <label for="male">MAC Addr (6 bytes)</label><br />
                     &nbsp;<input type="radio" id="scancoll_idtype_id" name="scancoll_idtype" value="ID">
-                    <label for="female">Beacon ID (4 bytes)</label><br>
+                    <label for="female">Beacon ID (2 bytes)</label><br>
                 </div>
 
 
@@ -620,9 +620,6 @@ function calculate_battery_life_time(input) {
 
 
 
-
-    // alert(JSON.stringify(input.scan_collection))
-    // alert(input.scan_collection.max_payl_len)
 
     let scancoll_additional_payl_len;
     if ((input.scan_collection.tech == "BLE") && (input.scan_collection.idtype == "ID")) {

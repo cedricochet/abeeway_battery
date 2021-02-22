@@ -213,10 +213,6 @@ function calculate_battery_life_time(input) {
 
 
 
-
-    // alert(JSON.stringify(input.scan_collection))
-    // alert(input.scan_collection.max_payl_len)
-
     let scancoll_additional_payl_len;
     if ((input.scan_collection.tech == "BLE") && (input.scan_collection.idtype == "ID")) {
         scancoll_additional_payl_len = SCANCOLL_ADDITIONAL_BEACONID_PAYL_LEN;
