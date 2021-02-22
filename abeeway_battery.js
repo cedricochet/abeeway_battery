@@ -87,7 +87,7 @@ const BUZZER_TIME           = 0.5;     // [s]    // TODO: TO BE DEFINED BY STEPH
 const ACCELEROMETER_CURRENT = 0.0065;  // Accelerometer [mA] (=6.5 uA)
 const QUIESENT_CURRENT      = 0.0010;  // [mA] (=10 uA)
 
-const HEARTBEAT_PAYL_LEN             = 6;      // [bytes]
+const HEARTBEAT_PAYL_LEN             = 12;      // [bytes]
 const GPS_PAYL_LEN                   = 16;     // [bytes]
 const AGPS_MIN_PAYL_LEN              = 6;      // [bytes]
 const AGPS_ADDITIONAL_SAT_PAYL_LEN   = 5;      // [bytes]
@@ -96,6 +96,9 @@ const WIFI_ADDITIONAL_BSSID_PAYL_LEN = 7;      // [bytes]
 const BLE_MIN_PAYL_LEN               = 6;      // [bytes]
 const BLE_ADDITIONAL_BSSID_PAYL_LEN  = 7;      // [bytes]
 
+const SCANCOLL_MIN_PAYL_LEN                 = 8;    // [bytes]
+const SCANCOLL_ADDITIONAL_MACADDR_PAYL_LEN  = 7;    // [bytes]
+const SCANCOLL_ADDITIONAL_BEACONID_PAYL_LEN = 4;    // [bytes]
 
 /* CALCULATION FUNCTIONS */
 
@@ -157,7 +160,18 @@ function calculate_ble_current(nof_msg_per_day) {
     return average_current;    // in [mA]
 }
 
-function calculate_custom_ble_usage_current(operation, usage_time_per_day) {
+function calculate_scancollection_current(sf, nof_msg_per_day, tech, idtype, nof_id) {
+    let average_current = 0;
+    if (tech == "WiFi") {
+        average_current = calculate_wifi_current(nof_msg_per_day)
+    }
+    if (tech == "BLE") {
+        average_current = calculate_ble_current(nof_msg_per_day)
+    }
+    return average_current;    // in [mA]
+}
+
+function calculate_custom_ble_usage_current(operation, usage_time_per_day) { 
     const average_current = BLE_OPERATIONS[operation].current * usage_time_per_day / ( 24 );    // [mA]
     return average_current;    // [mA]
 }
@@ -196,6 +210,41 @@ function calculate_battery_life_time(input) {
         input.ble.nof_msg_per_day
     );
 
+
+
+
+
+    // alert(JSON.stringify(input.scan_collection))
+    // alert(input.scan_collection.max_payl_len)
+
+    let scancoll_additional_payl_len;
+    if ((input.scan_collection.tech == "BLE") && (input.scan_collection.idtype == "ID")) {
+        scancoll_additional_payl_len = SCANCOLL_ADDITIONAL_BEACONID_PAYL_LEN;
+    } else {
+        scancoll_additional_payl_len = SCANCOLL_ADDITIONAL_MACADDR_PAYL_LEN;
+    }
+
+    let nof_id_in_full_msg = Math.floor((input.scan_collection.max_payl_len - SCANCOLL_MIN_PAYL_LEN) / scancoll_additional_payl_len);
+    let nof_id_last_msg = input.scan_collection.nof_id % nof_id_in_full_msg
+    let nof_full_fragments = Math.floor(input.scan_collection.nof_id / nof_id_in_full_msg);
+
+    let scan_collection_lora_current = calculate_lora_current(
+        input.sf, input.tx_power, 
+        ( SCANCOLL_MIN_PAYL_LEN + (nof_id_in_full_msg * scancoll_additional_payl_len) ), 
+        nof_full_fragments * input.scan_collection.nof_msg_per_day
+    );
+    scan_collection_lora_current += calculate_lora_current(
+        input.sf, input.tx_power, 
+        ( SCANCOLL_MIN_PAYL_LEN + (nof_id_last_msg * scancoll_additional_payl_len) ), 
+        input.scan_collection.nof_msg_per_day
+    );
+    scan_collection_lora_current *= input.nof_msg_repetition;
+
+
+
+
+
+
     const gps_geoloc_current       = calculate_gps_current(input.gps.ttff, input.gps.conv_time, input.gps.nof_msg_per_day);
     const agps_geoloc_current      = calculate_agps_current(input.agps.on_time, input.agps.nof_msg_per_day);
     const wifi_geoloc_current      = calculate_wifi_current(input.wifi.nof_msg_per_day);
@@ -203,18 +252,24 @@ function calculate_battery_life_time(input) {
 
     const custom_ble_usage_current = calculate_custom_ble_usage_current(input.custom_ble.operation, input.custom_ble.usage_time_per_day);
 
+    const scan_collection_current  = calculate_scancollection_current(
+        input.sf, input.scan_collection.nof_msg_per_day, input.scan_collection.tech, 
+        input.scan_collection.idtype, input.scan_collection.nof_id
+    );
+
     const accelerometer_current    = calculate_accelerometer_current(input.accelerometer_on); 
  
     const average_battery_leakage  = calculate_battery_leakage_current(input.product);
 
  
-    const total_lora_current = custom_msg_lora_current + heartbeat_lora_current + gps_lora_current + agps_lora_current + wifi_lora_current + ble_lora_current;
+    const total_lora_current = custom_msg_lora_current + heartbeat_lora_current + gps_lora_current + agps_lora_current + wifi_lora_current + ble_lora_current + scan_collection_lora_current;
     const total_fix_current = QUIESENT_CURRENT + average_battery_leakage;
 
     const total_current = ( 
         total_lora_current +
         ble_geoloc_current + gps_geoloc_current + agps_geoloc_current + wifi_geoloc_current + 
         custom_ble_usage_current + 
+        scan_collection_current +
         accelerometer_current +
         total_fix_current
     );    // [mA]
@@ -231,6 +286,7 @@ function calculate_battery_life_time(input) {
         wifi: Math.round( 1000 * (wifi_lora_current + wifi_geoloc_current) / total_current ) / 10,
         ble: Math.round( 1000 * (ble_lora_current + ble_geoloc_current) / total_current ) / 10,
         custom_ble: Math.round( 1000 * custom_ble_usage_current / total_current ) / 10,
+        scan_collection: Math.round( 1000 * (scan_collection_lora_current + scan_collection_current) / total_current ) / 10,
         accelerometer: Math.round( 1000 * accelerometer_current / total_current ) / 10,
         quiesent_and_battery_leakage: Math.round( 1000 * total_fix_current / total_current ) / 10,
     }

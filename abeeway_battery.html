@@ -19,6 +19,12 @@
             box-sizing: border-box;
             min-width: 200px;
         }
+        .flexitem1 { 
+            flex-flow: 1 1 1;
+            padding: 4px;
+            box-sizing: border-box;
+            min-width: 196px;
+        }
         input[type="text"], input[type="number"], select, button, textarea {
             width: 100%;
             padding: 2px 3px 2px 3px;
@@ -31,7 +37,10 @@
             padding: 2px 3px 2px 3px;
             margin-bottom: 10px;
             box-sizing: border-box;
-        } 
+        }
+        .radiogroup { 
+            margin-bottom: 10px;
+        }       
     </style>
 </head>
 <body>
@@ -41,7 +50,7 @@
         <fieldset class='flexcontainer flexitem'>
             <legend>General config params:</legend>
 
-            <div class='flexitem'>
+            <div class='flexitem1'>
                 <label for="product">Product:</label><br />
                 <select id="product" name="product">
                     <option value="industrial">Industrial Tracker</option>
@@ -59,16 +68,16 @@
 
                 <label for="sf">Spreading Factor:</label><br />
                 <select id="sf" name="sf">
-                    <option value="7">7</option>
-                    <option value="8">8</option>
-                    <option value="9">9</option>
-                    <option value="10" selected>10</option>
-                    <option value="11">11</option>
-                    <option value="12">12</option>
+                    <option value="7">SF7</option>
+                    <option value="8">SF8</option>
+                    <option value="9">SF9</option>
+                    <option value="10" selected>SF10</option>
+                    <option value="11">SF11</option>
+                    <option value="12">SF12</option>
                 </select><br />
             </div>
 
-            <div class='flexitem'>
+            <div class='flexitem1'>
                 <label for="nof_msg_repetition">N. of times every msg sent:</label><br />
                 <select id="nof_msg_repetition" name="nof_msg_repetition">
                     <option value=1 selected>1</option>
@@ -184,6 +193,71 @@
 
         </fieldset>
 
+
+        <fieldset class='flexcontainer flexitem'>
+            <legend>Scan collection reports:</legend>
+
+            <div class='flexitem1'>
+
+                <label for="scancoll_nof_msg_per_day">Num. of report/day:</label><br />
+                <input type="number" min="0" id="scancoll_nof_msg_per_day" name="scancoll_nof_msg_per_day" value="0"><br />
+
+                <div id="scancoll_tech_radiogroup" class="radiogroup">
+                    Applied technology:<br />
+                    &nbsp;<input 
+                        type="radio" id="scancoll_tech_ble" name="scancoll_tech" value="BLE" checked
+                        onchange = "javascript:document.getElementById('scancoll_idtype_radiogroup').style.display='block'"
+                    >
+                    <label for="male">BLE</label>
+                    &nbsp;<input 
+                        type="radio" id="scancoll_tech_wifi" name="scancoll_tech" value="WiFi"
+                        onchange = "javascript:document.getElementById('scancoll_idtype_radiogroup').style.display='none'">
+                    <label for="female">WiFi</label><br>
+                </div>
+
+                <div id="scancoll_idtype_radiogroup" class="radiogroup">
+                    BLE ID Type:<br />
+                    &nbsp;<input type="radio" id="scancoll_idtype_mac" name="scancoll_idtype" value="MAC" checked>
+                    <label for="male">MAC Addr (6 bytes)</label><br />
+                    &nbsp;<input type="radio" id="scancoll_idtype_id" name="scancoll_idtype" value="ID">
+                    <label for="female">Beacon ID (4 bytes)</label><br>
+                </div>
+
+
+            </div>
+
+            <div class='flexitem1'>
+
+                <label for="scancoll_max_payl_len">Max. payload len. [byte]:</label><br />
+                <select id="scancoll_max_payl_len" name="scancoll_max_payl_len">
+                    <option value=36>36 (SF12..SF10)</option>
+                    <option value=92>92 (SF9..SF7)</option>
+                </select><br />
+
+                <label for="scancoll_nof_id">Num. of ID/msg:</label><br />
+                <select id="scancoll_nof_id" name="scancoll_nof_id">
+                    <option value=1>1</option>
+                    <option value=2>2</option>
+                    <option value=3>3</option>
+                    <option value=4>4</option>
+                    <option value=5>5</option>
+                    <option value=6>6</option>
+                    <option value=7>7</option>
+                    <option value=8 selected>8</option>
+                    <option value=9>9</option>
+                    <option value=10>10</option>
+                    <option value=11>11</option>
+                    <option value=12>12</option>
+                    <option value=13>13</option>
+                    <option value=14>14</option>
+                    <option value=15>15</option>
+                    <option value=16>16</option>
+                </select><br />
+
+            </div>
+
+        </fieldset>
+
         <!-- Will be implemented soon!!! -->
         <!--
         <fieldset class='flexitem'>
@@ -261,7 +335,14 @@
                 usage_time_per_day: document.getElementById('custom_ble_usage_time_per_day').value, // fast_adv|slow_adv|connected|fast_scan|slow_scan
                 operation:          document.getElementById('custom_ble_operation').value,
             },
-            
+            scan_collection: {
+                nof_msg_per_day:    document.getElementById('scancoll_nof_msg_per_day').value,
+                tech:               document.getElementById('scancoll_tech_ble').checked ? "BLE" : "WiFi",
+                idtype:             document.getElementById('scancoll_tech_ble').checked && document.getElementById('scancoll_idtype_id').checked ? "ID" : "MAC",
+                max_payl_len:       document.getElementById('scancoll_max_payl_len').value,
+                nof_id:             document.getElementById('scancoll_nof_id').value,
+            },
+           
             // The following parameters will be implemented soon!!! 
             /*
             proximity: {
@@ -276,7 +357,7 @@
         let result = calculate_battery_life_time(input);
         // document.getElementById('result').value = JSON.stringify(result, null, 2);
 
-        let result_text = "Battery life time: " + result.battery_life_time + " days\n";
+        let result_text = "Battery life time: " + result.battery_life_time + " days (" + (result.battery_life_time/365).toFixed(2) + " years)\n";
         result_text += "Energy distribution:\n";
         if (result.current_distribution.custom_msg > 0) { 
             result_text += "  Custom msg: " + result.current_distribution.custom_msg + " %\n"; 
@@ -298,6 +379,9 @@
         }
         if (result.current_distribution.custom_ble > 0) { 
             result_text += "  Custom BLE: " + result.current_distribution.custom_ble + " %\n"; 
+        }
+        if (result.current_distribution.scan_collection > 0) { 
+            result_text += "  Scan Collection: " + result.current_distribution.scan_collection + " %\n"; 
         }
         if (result.current_distribution.accelerometer > 0) { 
             result_text += "  Accelerometer: " + result.current_distribution.accelerometer + " %\n"; 
