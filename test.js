@@ -9,7 +9,7 @@ let input = {
     accelerometer_on: true,
 
     custom_msg: {
-        nof_msg_per_day: 0,
+        nof_msg_per_day: 5,
         payl_len: 17,                       // [bytes]
     },
     heartbeat: {
@@ -37,6 +37,14 @@ let input = {
         usage_time_per_day: 0,
         operation: 'fast_adv',              // fast_adv|slow_adv|connected|fast_scan|slow_scan
     },
+    scan_collection: {
+        nof_msg_per_day:    12,
+        tech:               'BLE',    // BLE|WiFi,
+        idtype:             'MAC',    // MAC|ID,
+        max_payl_len:       92,       // 36|92
+        nof_id:             12,       // 1..20
+    },
+
 
     // The following parameters will be implemented soon!!!
     proximity: {
@@ -72,6 +80,9 @@ if (result.current_distribution.ble > 0) {
 }
 if (result.current_distribution.custom_ble > 0) { 
     result_text += "  Custom BLE: " + result.current_distribution.custom_ble + " %\n"; 
+}
+if (result.current_distribution.scan_collection > 0) { 
+    result_text += "  Scan collecrion: " + result.current_distribution.scan_collection + " %\n"; 
 }
 if (result.current_distribution.accelerometer > 0) { 
     result_text += "  Accelerometer: " + result.current_distribution.accelerometer + " %\n"; 
