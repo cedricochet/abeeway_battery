@@ -325,47 +325,47 @@
 
             product:                document.getElementById('product').value,                       // industrial|compact|micro|smart_badge
             tx_power:               document.getElementById('tx_power').value,                      // _14dBm_|_17dBm_|_19dBm
-            sf:                     document.getElementById('sf').value,                            // 7|8|9|10|11|12
-            nof_msg_repetition:     document.getElementById('nof_msg_repetition').value,
+            sf:                     parseInt(document.getElementById('sf').value),                            // 7|8|9|10|11|12
+            nof_msg_repetition:     parseInt(document.getElementById('nof_msg_repetition').value),
             accelerometer_on:       document.getElementById('accelerometer_on').checked,
 
             custom_msg: {
-                nof_msg_per_day:    document.getElementById('custom_msg_nof_msg_per_day').value,
-                payl_len:           document.getElementById('custom_msg_payl_len').value,               // [bytes]
+                nof_msg_per_day:    parseInt(document.getElementById('custom_msg_nof_msg_per_day').value),
+                payl_len:           parseInt(document.getElementById('custom_msg_payl_len').value),               // [bytes]
             },
             heartbeat: {
-                nof_msg_per_day:    document.getElementById('heartbeat_nof_msg_per_day').value,
+                nof_msg_per_day:    parseInt(document.getElementById('heartbeat_nof_msg_per_day').value),
             },
             gps: {
-                nof_msg_per_day:    document.getElementById('gps_nof_msg_per_day').value,
-                ttff:               document.getElementById('gps_ttff').value,                      // [s]
-                conv_time:          document.getElementById('gps_conv_time').value,                 // [s]
+                nof_msg_per_day:    parseInt(document.getElementById('gps_nof_msg_per_day').value),
+                ttff:               parseFloat(document.getElementById('gps_ttff').value),                      // [s]
+                conv_time:          parseFloat(document.getElementById('gps_conv_time').value),                 // [s]
             },
             agps: {
-                nof_msg_per_day:    document.getElementById('agps_nof_msg_per_day').value,
-                on_time:            document.getElementById('agps_on_time').value,                  // [s]
-                nof_satellites:     document.getElementById('agps_nof_satellites').value,
+                nof_msg_per_day:    parseInt(document.getElementById('agps_nof_msg_per_day').value),
+                on_time:            parseFloat(document.getElementById('agps_on_time').value),                  // [s]
+                nof_satellites:     parseInt(document.getElementById('agps_nof_satellites').value),
             },
             wifi: {
-                nof_msg_per_day:    document.getElementById('wifi_nof_msg_per_day').value,
-                nof_bssid:          document.getElementById('wifi_nof_bssid').value,                
+                nof_msg_per_day:    parseInt(document.getElementById('wifi_nof_msg_per_day').value),
+                nof_bssid:          parseInt(document.getElementById('wifi_nof_bssid').value),                
             },
             ble: {
-                nof_msg_per_day:    document.getElementById('ble_nof_msg_per_day').value,
-                nof_beaconid:       document.getElementById('ble_nof_beaconid').value,
+                nof_msg_per_day:    parseInt(document.getElementById('ble_nof_msg_per_day').value),
+                nof_beaconid:       parseInt(document.getElementById('ble_nof_beaconid').value),
             },
             custom_ble: {
-                usage_time_per_day: document.getElementById('custom_ble_usage_time_per_day').value, // fast_adv|slow_adv|connected|fast_scan|slow_scan
-                operation:          document.getElementById('custom_ble_operation').value,
+                usage_time_per_day: parseFloat(document.getElementById('custom_ble_usage_time_per_day').value), 
+                operation:          document.getElementById('custom_ble_operation').value,    // fast_adv|slow_adv|connected|fast_scan|slow_scan
             },
             scan_collection: {
-                nof_msg_per_day:    document.getElementById('scancoll_nof_msg_per_day').value,
+                nof_msg_per_day:    parseInt(document.getElementById('scancoll_nof_msg_per_day').value),
                 tech:               document.getElementById('scancoll_tech_ble').checked ? "BLE" : "WiFi",
                 idtype:             document.getElementById('scancoll_tech_ble').checked && document.getElementById('scancoll_idtype_id').checked ? "ID" : "MAC",
-                max_payl_len:       document.getElementById('scancoll_max_payl_len').value,
-                nof_id:             document.getElementById('scancoll_nof_id').value,
+                max_payl_len:       parseInt(document.getElementById('scancoll_max_payl_len').value),
+                nof_id:             parseInt(document.getElementById('scancoll_nof_id').value),
             },
-           
+
             // The following parameters will be implemented soon!!! 
             /*
             proximity: {
