@@ -64,20 +64,20 @@ const BLE_OPERATIONS = {
 };
 
 const TX_POWERS = { 
-    _14dBm_: { descr: '14 dBm', current: 45 },      // SX1262 TX [mA] 
-    _17dBm_: { descr: '17 dBm', current: 75 },      // SX1262 TX [mA]
-    _19dBm_: { descr: '19 dBm', current: 85 },      // SX1262 TX [mA]
+    _14dBm_: { descr: '14 dBm', current: 50 },      // SX1262 TX [mA] 
+    _17dBm_: { descr: '17 dBm', current: 85 },      // SX1262 TX [mA]
+    _19dBm_: { descr: '19 dBm', current: 100 },      // SX1262 TX [mA]
 }
 
 const SUPPLY_VOLTAGE        = 3.6;     // Supply voltage [V]
-const MCU_CURRENT           = 0.3;     // Current MCU in active mode [mA]
+const MCU_CURRENT           = 0.6;     // Current MCU in active mode [mA]
 const RX_CURRENT            = 10;      // Current SX1262 RX [mA]
-const GPS_CURRENT           = 22;      // Current GPS [mA]
-const GPS_STANDBY_CURRENT   = 0.05;    // Current GPS Stand-by [mA]
-const WIFI_CURRENT          = 60;      // Current WiFi [mA]
+const GPS_CURRENT           = 25;      // Current GPS [mA]
+const GPS_STANDBY_CURRENT   = 0.007;    // Current GPS Stand-by [mA]
+const WIFI_CURRENT          = 70;      // Current WiFi [mA]
 const WIFI_ON_TIME          = 3;       // WIFI ON time [s]
-const BLE_CURRENT           = 10;      // Current BLT [mA]
-const BLE_ON_TIME           = 3;       // WIFI ON time [s]
+const BLE_CURRENT           = 10;      // Current BLT [mA] There are different BLE currents regarding the mode and Tx power so 1 constant is not enough
+const BLE_ON_TIME           = 3;       // WIFI ON time [s] This is right only for one type of scan in one specific BLE mode
 
 // The following parameters will be implemented soon !!!
 const PROXIMITY_DET_CURRENT = 10;      // [mA]   // TODO: TO BE DEFINED BY STEPHANE!!!
@@ -85,7 +85,7 @@ const BUZZER_CURRENT        = 100;     // [mA]   // TODO: TO BE DEFINED BY STEPH
 const BUZZER_TIME           = 0.5;     // [s]    // TODO: TO BE DEFINED BY STEPHANE!!!
 
 const ACCELEROMETER_CURRENT = 0.0065;  // Accelerometer [mA] (=6.5 uA)
-const QUIESENT_CURRENT      = 0.0010;  // [mA] (=10 uA)
+const QUIESENT_CURRENT      = 0.0107;  // [mA] (=10.7 uA)
 
 const HEARTBEAT_PAYL_LEN             = 12;      // [bytes]
 const GPS_PAYL_LEN                   = 16;     // [bytes]
